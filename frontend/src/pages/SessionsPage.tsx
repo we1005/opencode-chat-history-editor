@@ -20,6 +20,7 @@ import { BatchActions } from '../components/SessionList/BatchActions';
 import { RenameDialog } from '../components/SessionList/RenameDialog';
 import { DeleteConfirmDialog } from '../components/SessionList/DeleteConfirmDialog';
 import { useSelectionStore } from '../stores/selectionStore';
+import { useSessions } from '../hooks';
 import { api } from '../services/api';
 import type { SessionTreeNode } from '../types';
 
@@ -55,7 +56,7 @@ export function SessionsPage() {
     severity: 'success' 
   });
   
-  const [sessions, setSessions] = useState<SessionTreeNode[]>([]);
+  const { data: sessions = [] } = useSessions(projectId ?? '');
 
   if (!projectId) {
     return (

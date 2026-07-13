@@ -740,22 +740,38 @@ const MessageItem = memo(function MessageItem({ message, index, registerRef, hig
                     </Box>
                   </Box>
                 )}
-                {toolCalls && toolCalls.length > 0 && (
+                    {toolCalls && toolCalls.length > 0 && (
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, maxWidth: '85%' }}>
                     {toolCalls.map((tool: any, idx: number) => {
-                      const toolName = tool.tool || 'unknown';
+                      const toolName = tool.tool || tool.name || 'unknown';
                       const status = tool.state?.status || 'unknown';
                       const title = tool.title || '';
-                      const isTask = toolName === 'task';
-                      const subagentType = tool.state?.input?.subagent_type;
-                      const description = tool.state?.input?.description;
+                      const subagentType = tool.state?.input?.subagent_type || tool.input?.subagent_type || tool.subagentType || '';
+                      const isTask = toolName === 'task' || toolName === 'subagent' || !!subagentType;
+                      const description = tool.state?.input?.description || tool.input?.description || tool.description || '';
                       
                       let sessionId: string | null = null;
-                      if (isTask && tool.state?.output) {
-                        const match = tool.state.output.match(/task_id:\s*(ses_[a-zA-Z0-9]+)/);
-                        if (match) {
-                          sessionId = match[1];
+                      if (isTask) {
+                        const tryExtractId = (obj: any): string | null => {
+                          if (!obj || typeof obj !== 'object') {
+                            if (typeof obj === 'string') {
+                              const m = obj.match(/<task\s+id="([a-zA-Z0-9_]+)"/);
+                              return m ? m[1] : null;
+                            }
+                            return null;
+                          }
+                          return obj.sessionId || obj.session_id || obj.id || obj.task_id || null;
+                        };
+                        sessionId = tryExtractId(tool);
+                        if (!sessionId) sessionId = tryExtractId(tool.state);
+                        if (!sessionId) sessionId = tryExtractId(tool.state?.metadata);
+                        if (!sessionId && tool.state?.output) {
+                          const m = tool.state.output.match(/<task\s+id="([a-zA-Z0-9_]+)"/);
+                          sessionId = m ? m[1] : null;
                         }
+                        if (!sessionId && tool.state?.result) sessionId = tryExtractId(
+                          (() => { try { return typeof tool.state.result === 'string' ? JSON.parse(tool.state.result) : tool.state.result; } catch { return null; } })()
+                        );
                       }
                       
                       const StatusIcon = status === 'completed' ? CheckCircleIcon : status === 'error' ? ErrorIcon : HourglassEmptyIcon;
@@ -803,9 +819,11 @@ const MessageItem = memo(function MessageItem({ message, index, registerRef, hig
                             )}
                           </Box>
                           {isTask && sessionId && (
-                            <Link 
-                              href={`/sessions/${sessionId}`}
-                              sx={{ 
+                             <Link 
+                               href={`/sessions/${sessionId}`}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               sx={{ 
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 0.5,
