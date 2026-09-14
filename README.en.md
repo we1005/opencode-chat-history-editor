@@ -39,7 +39,7 @@ Built on [KoniKee/opencode-sessions](https://github.com/KoniKee/opencode-session
 | 🧩 | **Full JSON access** | Inspect and edit tool input/output, metadata and other fields validated by OpenCode |
 | 👁️ | **Complete timeline** | Read text, reasoning, tools, attachments, execution steps and actual errors in original order |
 | ↩️ | **Backup & restore** | Keep the original before each save; restore a previous version through the same API |
-| 🔎 | **Search & identify** | Search session content; copy full session IDs or deep links for Codex / Claude Code |
+| 🔎 | **Search & identify** | Jump from a search hit to its original conversation context; copy session IDs or deep links |
 | ⚡ | **One-command startup** | Check prerequisites, install missing dependencies, find available ports and print the ready URL |
 
 > **Later messages stay intact.** Editing a part does not automatically truncate history or rerun the model. Each part is saved separately; its ID, parent session/message and type remain fixed.
@@ -93,7 +93,7 @@ Verified with **OpenCode 1.18.30 / Node.js 24.14.1**. Other OpenCode versions mu
 ## Workflow
 
 1. **Select a session.** The project view stores `?session=ses_...` in the URL, preserving selection across refresh and browser history navigation.
-2. **Find a message.** Search text, reasoning, tools or errors. Expand tools individually or use the global toggle.
+2. **Find a message.** Search text, reasoning, tools or errors. Click **查看上下文** (View context) on a result to restore the complete timeline, scroll to the message and highlight it. Read the surrounding messages, then use **返回搜索结果** (Back to results) to continue searching without losing your query. **回到定位消息** (Return to located message) jumps back to the selected hit. Expand tools individually or use the global toggle.
 3. **Edit a part.** Click **编辑消息** (Edit message), then choose text, full JSON or Markdown preview.
 4. **Save.** Click **保存片段** (Save part), or press `⌘ / Ctrl + Enter`. Your draft is retained on conflicts and errors.
 5. **Restore.** Open **历史备份** (History), load a version, then save the part.

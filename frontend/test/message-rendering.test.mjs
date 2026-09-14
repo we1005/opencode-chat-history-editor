@@ -27,7 +27,7 @@ function render(info = {}, parts = []) {
     data: JSON.stringify({ role: 'assistant', ...info }),
     parts: parts.map((data, index) => ({ id: `prt_${index}`, message_id: 'msg_fixture', session_id: 'ses_fixture', time_created: index, time_updated: index, data: JSON.stringify(data) })),
   };
-  return renderToStaticMarkup(React.createElement(MessageItem, { message, index: 0, registerRef() {}, highlightedIndex: null, expandTools: true }));
+  return renderToStaticMarkup(React.createElement(MessageItem, { message, index: 0, registerRef() {}, expandTools: true }));
 }
 
 test('provider failures show their actual error, not an invented interruption message', () => {
