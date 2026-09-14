@@ -11,7 +11,7 @@
   <circle cx="1070" cy="130" r="180" fill="#718cf5" opacity=".05"/>
   <circle cx="1070" cy="130" r="132" fill="none" stroke="#84a5fa" stroke-opacity=".12"/>
   <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
-    <rect x="52" y="42" width="214" height="28" rx="14" fill="#67d8e9" fill-opacity=".12"/>
+    <rect x="52" y="42" width="260" height="28" rx="14" fill="#67d8e9" fill-opacity=".12"/>
     <circle cx="68" cy="56" r="4" fill="#69dfbc"/>
     <text x="80" y="61" fill="#a9e9e8" font-size="12" font-weight="600" letter-spacing="1.6">LOCAL-FIRST · OPEN SOURCE</text>
     <text x="52" y="137" fill="#f4f7ff" font-size="42" font-weight="700" letter-spacing="-.8">OpenCode Chat History Editor</text>
