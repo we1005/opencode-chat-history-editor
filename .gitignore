@@ -23,7 +23,8 @@ design/
 .env
 .editor-test/
 .run/
-docs/本地记录/
+docs/本地记录/*
+!docs/本地记录/错误记录对后续模型回答的影响分析.md
 /参考资料.md
 test-results/
 
