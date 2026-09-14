@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9001/api';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -18,7 +18,7 @@ async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
 
   const result: ApiResponse<T> = await response.json();
 
-  if (!result.success) {
+  if (!response.ok || !result.success) {
     throw new Error(result.error || 'Request failed');
   }
 
@@ -26,6 +26,17 @@ async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  editor: {
+    status: () => fetchApi<{ healthy: boolean; version: string; url: string; backupDirectory: string }>('/editor/status'),
+    get: (sessionID: string, messageID: string, partID: string) =>
+      fetchApi<import('../types/session').PartSnapshot>(editorPath(sessionID, messageID, partID)),
+    update: (sessionID: string, messageID: string, partID: string, snapshot: import('../types/session').PartSnapshot) =>
+      fetchApi<import('../types/session').PartSnapshot>(editorPath(sessionID, messageID, partID), {
+        method: 'PATCH', body: JSON.stringify(snapshot),
+      }),
+    history: (sessionID: string, messageID: string, partID: string) =>
+      fetchApi<import('../types/session').PartBackup[]>(`${editorPath(sessionID, messageID, partID)}/history`),
+  },
   projects: {
     list: () => fetchApi<import('../types').Project[]>('/projects'),
     get: (id: string) => fetchApi<import('../types').Project>(`/projects/${id}`),
@@ -71,3 +82,7 @@ export const api = {
 };
 
 export default api;
+
+function editorPath(sessionID: string, messageID: string, partID: string) {
+  return `/editor/sessions/${encodeURIComponent(sessionID)}/messages/${encodeURIComponent(messageID)}/parts/${encodeURIComponent(partID)}`;
+}

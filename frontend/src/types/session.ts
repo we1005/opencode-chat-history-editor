@@ -54,6 +54,17 @@ export interface Part {
   data: string;
 }
 
+export type EditablePart = Record<string, unknown> & {
+  id: string;
+  messageID: string;
+  sessionID: string;
+  type: string;
+  text?: string;
+};
+
+export interface PartSnapshot { part: EditablePart; revision: string }
+export interface PartBackup { id: string; createdAt: string; part: EditablePart }
+
 export interface MessageContent {
   role: 'user' | 'assistant' | 'system';
   agent?: string;

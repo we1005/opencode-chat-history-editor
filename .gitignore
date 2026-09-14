@@ -14,10 +14,18 @@ design/
 # Database
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 
-# Environment (保留 .env 和 .env.example 供直接使用)
+# Local environment (only .env.example belongs in Git)
 .env.local
 .env.*.local
+.env
+.editor-test/
+.run/
+docs/本地记录/
+/参考资料.md
+test-results/
 
 # IDE
 .idea/

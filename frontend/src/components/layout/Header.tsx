@@ -27,6 +27,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       <Toolbar sx={{ minHeight: 64 }}>
         <IconButton
           edge="start"
+          aria-label="打开项目菜单"
           onClick={onMenuClick}
           sx={{ mr: 2, display: { md: 'none' } }}
         >
@@ -43,7 +44,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         >
           <FolderIcon sx={{ mr: 1.5, color: 'primary.main' }} />
           <Typography variant="h6" fontWeight={600}>
-            OpenCode Sessions
+            OpenCode Message Editor
           </Typography>
         </Link>
         <Box sx={{ flexGrow: 1 }} />

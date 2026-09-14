@@ -7,11 +7,14 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       port: parseInt(env.VITE_PORT || '9000'),
-      host: true,
+      host: '127.0.0.1',
+      strictPort: true,
+      proxy: { '/api': env.EDITOR_API_PROXY || 'http://127.0.0.1:9001' },
     },
     preview: {
       port: parseInt(env.VITE_PORT || '9000'),
-      host: true,
+      host: '127.0.0.1',
+      proxy: { '/api': env.EDITOR_API_PROXY || 'http://127.0.0.1:9001' },
     },
   }
 })

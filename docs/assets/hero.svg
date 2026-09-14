@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
+  <title id="title">OpenCode Chat History Editor</title>
+  <desc id="desc">Edit your conversations in place. User messages, assistant replies, reasoning and tools.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101c36"/><stop offset="1" stop-color="#172951"/></linearGradient>
+    <linearGradient id="accent" x2="1" y2="1"><stop stop-color="#64d7f7"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#ffffff" stroke-opacity=".035"/></pattern>
+  </defs>
+  <rect width="1200" height="340" rx="24" fill="url(#bg)"/>
+  <rect width="1200" height="340" rx="24" fill="url(#grid)"/>
+  <circle cx="1070" cy="130" r="180" fill="#718cf5" opacity=".05"/>
+  <circle cx="1070" cy="130" r="132" fill="none" stroke="#84a5fa" stroke-opacity=".12"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+    <rect x="52" y="42" width="214" height="28" rx="14" fill="#67d8e9" fill-opacity=".12"/>
+    <circle cx="68" cy="56" r="4" fill="#69dfbc"/>
+    <text x="80" y="61" fill="#a9e9e8" font-size="12" font-weight="600" letter-spacing="1.6">LOCAL-FIRST · OPEN SOURCE</text>
+    <text x="52" y="137" fill="#f4f7ff" font-size="42" font-weight="700" letter-spacing="-.8">OpenCode Chat History Editor</text>
+    <text x="54" y="179" fill="#b5c4df" font-size="21">Your conversation. Your edits. Your history.</text>
+    <g fill="#d1dff8" font-size="13" font-weight="500">
+      <rect x="54" y="216" width="130" height="36" rx="8" fill="#ffffff" fill-opacity=".065"/>
+      <text x="77" y="239">User messages</text>
+      <rect x="194" y="216" width="126" height="36" rx="8" fill="#ffffff" fill-opacity=".065"/>
+      <text x="218" y="239">Agent replies</text>
+      <rect x="330" y="216" width="113" height="36" rx="8" fill="#ffffff" fill-opacity=".065"/>
+      <text x="353" y="239">Reasoning</text>
+      <rect x="453" y="216" width="124" height="36" rx="8" fill="#ffffff" fill-opacity=".065"/>
+      <text x="476" y="239">Tool parts</text>
+    </g>
+    <text x="54" y="297" fill="#91a7cd" font-family="ui-monospace,Consolas,monospace" font-size="13">session → message → part   /   edit · preview · restore</text>
+  </g>
+  <g transform="translate(919 83)">
+    <rect x="0" y="0" width="214" height="162" rx="18" fill="#162440" stroke="#54719f" stroke-opacity=".65"/>
+    <circle cx="22" cy="20" r="4" fill="#86a2d1"/><circle cx="37" cy="20" r="4" fill="#86a2d1" opacity=".6"/><circle cx="52" cy="20" r="4" fill="#86a2d1" opacity=".3"/>
+    <path d="M1 37H213" stroke="#54719f" stroke-opacity=".4"/>
+    <rect x="21" y="55" width="118" height="13" rx="6" fill="#7395ce" fill-opacity=".35"/>
+    <rect x="21" y="80" width="159" height="13" rx="6" fill="#7395ce" fill-opacity=".22"/>
+    <rect x="21" y="105" width="86" height="13" rx="6" fill="#7395ce" fill-opacity=".22"/>
+    <g transform="translate(145 94) rotate(-8)">
+      <rect x="0" y="0" width="74" height="74" rx="19" fill="url(#accent)"/>
+      <path d="M22 48l3-12 22-22 10 10-22 22-13 2zm19-28 10 10" fill="none" stroke="#172443" stroke-width="4" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>

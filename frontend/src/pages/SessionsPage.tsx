@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -12,7 +12,7 @@ import {
   Alert,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { SessionList } from '../components/SessionList';
 import { SessionDetailPanel } from '../components/SessionDetail';
@@ -24,9 +24,15 @@ import { useSessions } from '../hooks';
 import { api } from '../services/api';
 import type { SessionTreeNode } from '../types';
 
+function flattenSessions(sessionList: SessionTreeNode[]): SessionTreeNode[] {
+  return sessionList.flatMap(session => [session, ...flattenSessions(session.children || [])]);
+}
+
 export function SessionsPage() {
   const { projectId } = useParams<{ projectId: string }>();
-  const [selectedSession, setSelectedSession] = useState<SessionTreeNode | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedSessionId = searchParams.get('session');
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
@@ -56,7 +62,22 @@ export function SessionsPage() {
     severity: 'success' 
   });
   
-  const { data: sessions = [] } = useSessions(projectId ?? '');
+  const { data: sessions = [], isLoading: sessionsLoading, error: sessionsError } = useSessions(projectId ?? '');
+  const selectedSession = useMemo(() => flattenSessions(sessions).find(session => session.id === selectedSessionId) || null, [sessions, selectedSessionId]);
+
+  function setSelectedSession(session: SessionTreeNode | null) {
+    if (isMobile && session) {
+      navigate(`/sessions/${encodeURIComponent(session.id)}`);
+      return;
+    }
+    if (session?.id === selectedSessionId) return;
+    setSearchParams(previous => {
+      const next = new URLSearchParams(previous);
+      if (session) next.set('session', session.id);
+      else next.delete('session');
+      return next;
+    }, { replace: !session });
+  }
 
   if (!projectId) {
     return (
@@ -93,9 +114,7 @@ export function SessionsPage() {
       await api.sessions.update(renameDialog.session.id, newTitle);
       setSnackbar({ open: true, message: '重命名成功', severity: 'success' });
       queryClient.invalidateQueries({ queryKey: ['sessions', projectId] });
-      if (selectedSession?.id === renameDialog.session.id) {
-        setSelectedSession({ ...selectedSession, title: newTitle });
-      }
+      queryClient.invalidateQueries({ queryKey: ['session', renameDialog.session.id] });
     } catch (error) {
       setSnackbar({ open: true, message: '重命名失败：数据库只读', severity: 'error' });
     } finally {
@@ -134,16 +153,6 @@ export function SessionsPage() {
       setIsLoading(false);
       setDeleteDialog({ open: false, sessions: [] });
     }
-  };
-
-  const flattenSessions = (sessionList: SessionTreeNode[]): SessionTreeNode[] => {
-    const result: SessionTreeNode[] = [];
-    const traverse = (s: SessionTreeNode) => {
-      result.push(s);
-      if (s.children) s.children.forEach(traverse);
-    };
-    sessionList.forEach(traverse);
-    return result;
   };
 
   return (
@@ -209,7 +218,7 @@ export function SessionsPage() {
           )}
           <SessionList
             projectId={projectId}
-            selectedId={selectedSession?.id}
+            selectedId={selectedSessionId || undefined}
             onSelect={setSelectedSession}
             isSelecting={isSelecting}
             selectedIds={selectedIds}
@@ -225,8 +234,9 @@ export function SessionsPage() {
             <Box sx={{ flex: 1, overflow: 'hidden' }}>
               {selectedSession ? (
                 <SessionDetailPanel 
+                  key={selectedSession.id}
                   session={selectedSession} 
-                  onDelete={(s) => {
+                  onDelete={() => {
                     setSelectedSession(null);
                     queryClient.invalidateQueries({ queryKey: ['sessions', projectId] });
                   }}
@@ -241,7 +251,10 @@ export function SessionsPage() {
                     color: 'text.secondary',
                   }}
                 >
-                  <Typography>选择一个会话查看详情</Typography>
+                  {sessionsError ? <Alert severity="error">加载会话失败：{sessionsError.message}</Alert> :
+                    <Typography sx={{ px: 2, overflowWrap: 'anywhere' }}>{selectedSessionId
+                      ? sessionsLoading ? '正在加载选中的会话…' : `此项目中找不到会话 ${selectedSessionId}，可能已被删除或不属于当前项目。`
+                      : '选择一个会话查看详情'}</Typography>}
                 </Box>
               )}
             </Box>

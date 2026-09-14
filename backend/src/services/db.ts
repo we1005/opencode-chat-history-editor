@@ -5,20 +5,11 @@ import fs from 'fs';
 
 // 自适应获取默认数据库路径
 function getDefaultDbPath(): string {
-  const homeDir = os.homedir();
-  const platform = os.platform();
-  
-  if (platform === 'win32') {
-    // Windows: C:\Users\{username}\.local\share\opencode\opencode.db
-    return path.join(homeDir, '.local', 'share', 'opencode', 'opencode.db');
-  } else {
-    // Linux/Mac: ~/.local/share/opencode/opencode.db
-    return path.join(homeDir, '.local', 'share', 'opencode', 'opencode.db');
-  }
+  return path.join(process.env.XDG_DATA_HOME || path.join(os.homedir(), '.local', 'share'), 'opencode', 'opencode.db');
 }
 
 // 数据库路径（优先使用环境变量，否则使用默认路径）
-const DB_PATH = process.env.DB_PATH || getDefaultDbPath();
+let DB_PATH = process.env.DB_PATH || getDefaultDbPath();
 
 // 检查数据库文件是否存在
 function checkDatabase(): boolean {
@@ -59,14 +50,16 @@ export function reconnectDatabase(newPath?: string): { success: boolean; message
     return { success: false, message: `Database file not found: ${targetPath}`, path: targetPath };
   }
   
-  // 关闭旧连接
-  if (db) {
-    db.close();
-  }
-  
   try {
-    db = new Database(targetPath);
-    db.pragma('journal_mode = WAL');
+    const candidate = new Database(targetPath, { fileMustExist: true });
+    try {
+      candidate.prepare('SELECT id FROM session LIMIT 1').get();
+      candidate.prepare('SELECT id, data FROM part LIMIT 1').get();
+      candidate.pragma('journal_mode = WAL');
+    } catch (error) { candidate.close(); throw error; }
+    if (db) db.close();
+    db = candidate;
+    DB_PATH = targetPath;
     console.log(`[DB] Reconnected to database: ${targetPath}`);
     return { success: true, message: 'Connected successfully', path: targetPath };
   } catch (error) {

@@ -72,6 +72,7 @@ export function SessionDetailPage() {
         }}
       >
         <SessionDetailPanel 
+          key={session.id}
           session={session as any}
           onDelete={() => {
             window.location.href = '/';

@@ -12,6 +12,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
+import { EditorConnection } from '../components/SessionDetail/EditorConnection';
 
 interface DbConfig {
   path: string;
@@ -101,6 +102,7 @@ export function SettingsPage() {
         </Typography>
       </Box>
       
+      <EditorConnection />
       <Paper sx={{ p: 3, mt: 2 }}>
         <Typography variant="h6" gutterBottom>
           数据库配置

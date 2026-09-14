@@ -9,6 +9,7 @@ import path from 'path';
 import projectsRouter from './routes/projects';
 import sessionsRouter from './routes/sessions';
 import configRouter from './routes/config';
+import editorRouter from './routes/editor';
 
 // 配置
 const PORT = process.env.PORT || 9001;
@@ -27,12 +28,12 @@ const wsClients = new Set<WebSocket>();
 
 // 中间件配置
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: process.env.CORS_ORIGIN || ['http://localhost:9000', 'http://127.0.0.1:9000'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // 请求日志中间件
@@ -49,6 +50,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use('/api/projects', projectsRouter);
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/config', configRouter);
+app.use('/api/editor', editorRouter);
 
 // 健康检查端点
 app.get('/health', (req: Request, res: Response) => {
@@ -88,6 +90,14 @@ app.get('/api', (req: Request, res: Response) => {
       }
     }
   });
+});
+
+// Production: serve the built frontend and support client-side deep links.
+const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  res.sendFile(path.join(frontendDist, 'index.html'), error => { if (error) next(); });
 });
 
 // 404处理
@@ -160,7 +170,7 @@ function broadcast(message: any): void {
 }
 
 // 启动服务器
-server.listen(PORT, () => {
+server.listen(Number(PORT), process.env.HOST || '127.0.0.1', () => {
   console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║           OpenCode Sessions Backend Server                 ║

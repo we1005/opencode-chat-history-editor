@@ -89,7 +89,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       <Divider />
       <Box sx={{ p: 2 }}>
         <Typography variant="caption" color="text.secondary">
-          OpenCode 会话管理器 v1.0
+          消息编辑器 · 基于 OC Sessions
         </Typography>
       </Box>
     </Box>
